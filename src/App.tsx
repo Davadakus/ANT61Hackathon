@@ -1,7 +1,10 @@
+import MyThree from './Three.js';
 import { useEffect, useState } from 'react';
 import { parseRawMessages, parseMessage } from "./utils/parse.ts"
 import Map, { updateMap } from "./Map.tsx"
 import rawText from './assets/updated_beacon_output.txt?raw';
+
+
 
 function App() {
   const [currentMessage, setCurrentMessage] = useState("");
@@ -12,7 +15,7 @@ function App() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const duration: number = 3000;
+      const duration: number = 5000;
       const fakeMessageStream: string[] = await parseRawMessages(rawText);
       
       let i = 0;
@@ -43,15 +46,15 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* <MyThree /> */}
       <h1 className="text-xl text-center font-bold"> 
         ANT61 Beacon Data Simulation
       </h1>
       <div className="grid grid-cols-2 gap-4 p-4 flex-1">
         {/* First column */}
         <div className="flex flex-col space-y-4">
-          <div className="bg-blue-500 flex-1">
+          <div className="bg-blue-500 flex-1 overflow-hidden relative">
             Simulation
+            <MyThree rotation={rotation} gryoAccel={gryoAccel}/>
           </div>
         </div>
 
