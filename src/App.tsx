@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { parseRawMessages, parseMessage } from "./utils/parse.ts"
-import Map from "./Map.tsx"
+import Map, { updateMap } from "./Map.tsx"
 import rawText from './assets/updated_beacon_output.txt?raw';
 
 function App() {
-  const [currentMessage, setCurrentMessage] = useState("")
-  let [messageId, location, rotation, gryoAccel] = parseMessage(currentMessage);
+  const [currentMessage, setCurrentMessage] = useState("");
+  const [currentLocation, setCurrentLocation] = useState([0,0,0]);
+  const [messageId, setMessageId] = useState("");
+  const [rotation, setRotation] = useState([0, 0, 0]);
+  const [gryoAccel, setGryoAccel] = useState([0, 0, 0]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -14,7 +17,17 @@ function App() {
       
       let i = 0;
       const timeout = setInterval(() => { 
-        setCurrentMessage(fakeMessageStream[i]);
+        const newMessage = fakeMessageStream[i];
+        setCurrentMessage(newMessage);
+
+        const [newMessageId, newLocation, newRotation, newGryoAccel] = parseMessage(newMessage);
+
+        // Update states based on the parsed message
+        if (newMessageId !== null) setMessageId(newMessageId);
+        if (newRotation !== null) setRotation(newRotation);
+        if (newGryoAccel !== null) setGryoAccel(newGryoAccel);
+        if (newLocation !== null) setCurrentLocation(newLocation);
+
         i += 1;
         if (i >= fakeMessageStream.length) {
           clearInterval(timeout);
@@ -24,6 +37,12 @@ function App() {
   
     fetchData();
   }, [])
+
+  useEffect(() => {
+    if (currentLocation !== null){
+      updateMap(currentLocation);
+    }
+  }, [currentLocation])
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -49,7 +68,7 @@ function App() {
           </div>
           <div className="bg-green-500 h-full flex flex-col basis-1/3">
             <h1>Message ID: {messageId}</h1>
-            <h1>Location: {location && location[0]}, {location && location[1]}, {location && location[2]}</h1>
+            <h1>Location: {currentLocation && currentLocation[0]}, {currentLocation && currentLocation[1]}, {currentLocation && currentLocation[2]}</h1>
             <h1>Rotation: {rotation && rotation[0]}, {rotation && rotation[1]}, {rotation && rotation[2]}</h1>
             <h1>Gyroscopic Acceleration: {gryoAccel && gryoAccel[0]}, {gryoAccel && gryoAccel[1]}, {gryoAccel && gryoAccel[2]}</h1>
           </div>
