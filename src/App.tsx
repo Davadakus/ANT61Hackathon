@@ -58,7 +58,7 @@ function App() {
           </div>
           <div className="bg-blue-500 flex-1 overflow-hidden relative rounded">
             Simulation
-            {/* <MyThree rotation={rotation} gryoAccel={gryoAccel}/> */}
+            <MyThree rotation={rotation} gryoAccel={gryoAccel}/>
           </div>
         </div>
         
@@ -74,30 +74,69 @@ function App() {
               <Map />
             </h2>
           </h1>
+          <div className="grid grid-cols text-justify bg-stone-900 rounded p-2">
+            <div className="grid grid-cols-2 text-justify border-solid border-green-700 border-1">
+              {/* MessageID Row */}
+              <h1 className="col-span-1">Message ID:</h1>
+              <h1 className="col-span-1">{messageId}</h1>
+            </div>
 
+            <div className="grid grid-cols-2 text-justify ">
+              {/* Location Row */}
+              <h1 className="col-span-1">Location:</h1>
+              <div className="col-span-1 flex justify-between">
+                <h1>{currentLocation && currentLocation[0]?.toFixed(2)}°</h1>
+                <span>(Longitude)</span>
+              </div>
+              <h1 className="col-span-1"></h1> {/* Empty space for alignment */}
+              <div className="col-span-1 flex justify-between">
+                <h1>{currentLocation && currentLocation[1]?.toFixed(2)}°</h1>
+                <span>(Latitude)</span>
+              </div>
+              <h1 className="col-span-1"></h1> {/* Empty space for alignment */}
+              <div className="col-span-1 flex justify-between">
+                <h1>{currentLocation && currentLocation[2]?.toFixed(2)} km</h1>
+                <span>(Altitude)</span>
+              </div>
+            </div>
 
-          {/* New section for two equal-width boxes
-          <div className="flex gap-4">
-            <div className="bg-green-500 flex-1 rounded">
-              <h1 className="text-xl text-center font-bold px-6">Altitude Data</h1>
+            <div className="grid grid-cols-2 text-justify">
+              {/* Rotation Row */}
+              <h1 className="col-span-1">Rotation:</h1>
+              <div className="col-span-1 flex justify-between">
+                <h1>{rotation && rotation[0]?.toFixed(2)}°</h1>
+                <span>(Yaw)</span>
+              </div>
+              <h1 className="col-span-1"></h1> {/* Empty space for alignment */}
+              <div className="col-span-1 flex justify-between">
+                <h1>{rotation && rotation[1]?.toFixed(2)}°</h1>
+                <span>(Pitch)</span>
+              </div>
+              <h1 className="col-span-1"></h1> {/* Empty space for alignment */}
+              <div className="col-span-1 flex justify-between">
+                <h1>{rotation && rotation[2]?.toFixed(2)}°</h1>
+                <span>(Roll)</span>
+              </div>
             </div>
-            <div className="bg-green-500 flex-1 rounded basis-2/3 pt-4">
-              <h1 className="text-2xl text-center font-bold">Map</h1>
+
+            <div className="grid grid-cols-2 text-justify">
+              {/* Gyroscopic Acceleration Row */}
+              <h1 className="col-span-1">Gyroscopic Acceleration:</h1>
+              <div className="col-span-1 flex justify-between">
+                <h1>{gryoAccel && gryoAccel[0]?.toFixed(2)} rad/s²</h1>
+                <span>(X-axis)</span>
+              </div>
+              <h1 className="col-span-1"></h1> {/* Empty space for alignment */}
+              <div className="col-span-1 flex justify-between">
+                <h1>{gryoAccel && gryoAccel[1]?.toFixed(2)} rad/s²</h1>
+                <span>(Y-axis)</span>
+              </div>
+              <h1 className="col-span-1"></h1> {/* Empty space for alignment */}
+              <div className="col-span-1 flex justify-between">
+                <h1>{gryoAccel && gryoAccel[2]?.toFixed(2)} rad/s²</h1>
+                <span>(Z-axis)</span>
+              </div>
             </div>
-          </div>
-          <div className="flex gap-4 basis-2/3">
-            <div className="bg-gray-500 h-full grow rounded">
-              Altitude content
-            </div>
-            <Map />
-          </div> */}
-          
-          <div className="bg-gray-500 border-2 border-solid border-black h-full flex flex-col basis-1/3 rounded px-2">
-            <h1 className="text-2xl text-center font-bold">Live Data Feed:</h1>
-            <h1>Message ID: {messageId}</h1>
-            <h1>Location: {currentLocation && currentLocation[0]}, {currentLocation && currentLocation[1]}, {currentLocation && currentLocation[2]}</h1>
-            <h1>Rotation: {rotation && rotation[0]}, {rotation && rotation[1]}, {rotation && rotation[2]}</h1>
-            <h1>Gyroscopic Acceleration: {gryoAccel && gryoAccel[0]}, {gryoAccel && gryoAccel[1]}, {gryoAccel && gryoAccel[2]}</h1>
           </div>
         </div>
       </div>
