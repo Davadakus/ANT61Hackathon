@@ -31,9 +31,9 @@ export default class SceneInit {
       this.fov,
       window.innerWidth / window.innerHeight,
       1,
-      2000
+      5000
     );
-    this.camera.position.z = 1000;
+    this.camera.position.z = 2000;
 
     // NOTE: Specify a canvas which is already created in the HTML.
     const canvas = document.getElementById(this.canvasId);

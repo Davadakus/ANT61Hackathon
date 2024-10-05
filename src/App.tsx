@@ -11,7 +11,7 @@ function App() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const duration: number = 3000;
+      const duration: number = 1000;
       const fakeMessageStream: string[] = await parseRawMessages(rawText);
       
       let i = 0;
@@ -29,7 +29,7 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <MyThree />
+      <MyThree rotation={rotation}/>
       <h1 className="text-xl text-center font-bold"> 
         ANT61 Beacon Data Simulation
       </h1>

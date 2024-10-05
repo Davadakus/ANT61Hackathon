@@ -1,42 +1,47 @@
 import * as THREE from 'three';
 import { useEffect, useRef } from 'react';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-
 import SceneInit from './lib/SceneInit';
 
-function MyThree() {
+function MyThree({ rotation }) {
+  const loadedModelRef = useRef(null); // Ref to hold the loaded model
+  const sceneInitRef = useRef(null); // Ref to hold the SceneInit instance
+
+  // Initialize scene and load model on mount
   useEffect(() => {
-    const test = new SceneInit('myThreeJsCanvas');
-    test.initialize();
-    test.animate();
+    const sceneInit = new SceneInit('myThreeJsCanvas');
+    sceneInit.initialize();
+    sceneInit.animate();
+    sceneInitRef.current = sceneInit; // Store reference to SceneInit
 
-    // const boxGeometry = new THREE.BoxGeometry(8, 8, 8);
-    // const boxMaterial = new THREE.MeshNormalMaterial();
-    // const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
-    // test.scene.add(boxMesh);
-
-    let loadedModel;
-    const glftLoader = new GLTFLoader();
-    glftLoader.load('/assets/Beacon.gltf', (gltfScene) => {
-      loadedModel = gltfScene;
-      // console.log(loadedModel);
-
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load('/assets/Beacon.gltf', (gltfScene) => {
+      loadedModelRef.current = gltfScene; // Store reference to loaded model
       gltfScene.scene.rotation.y = Math.PI / 8;
       gltfScene.scene.position.y = 3;
       gltfScene.scene.scale.set(10, 10, 10);
-      test.scene.add(gltfScene.scene);
+      sceneInit.scene.add(gltfScene.scene);
     });
+  }, []); // Empty dependency array to run this effect only once
 
-    // const animate = () => {
-    //   if (loadedModel) {
-    //     loadedModel.scene.rotation.x += 0.01;
-    //     loadedModel.scene.rotation.y += 0.01;
-    //     loadedModel.scene.rotation.z += 0.01;
-    //   }
-    //   requestAnimationFrame(animate);
-    // };
-    // animate();
-  }, []);
+  // Update model position when location changes
+  useEffect(() => {
+    console.log("Rotation: " + rotation)
+    if (loadedModelRef.current) {
+      // Update rotation
+      if (rotation) {
+        // Convert degrees to radians
+        const yaw = THREE.MathUtils.degToRad(rotation[0]); // Y-axis
+        const pitch = THREE.MathUtils.degToRad(rotation[1]); // X-axis
+        const roll = THREE.MathUtils.degToRad(rotation[2]); // Z-axis
+
+        // Set the rotation
+        loadedModelRef.current.scene.rotation.set(pitch, yaw, roll);
+
+        
+      }
+    }
+  }, [rotation]); // Dependency on location prop
 
   return (
     <div>
