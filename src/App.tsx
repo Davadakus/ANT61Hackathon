@@ -26,7 +26,10 @@ function App() {
         if (newMessageId !== null) setMessageId(newMessageId);
         if (newRotation !== null) setRotation(newRotation);
         if (newGryoAccel !== null) setGryoAccel(newGryoAccel);
-        if (newLocation !== null) setCurrentLocation(newLocation);
+        if (newLocation !== null) {
+          setCurrentLocation(newLocation);
+          updateMap(newLocation);
+        }
 
         i += 1;
         if (i >= fakeMessageStream.length) {
@@ -37,12 +40,6 @@ function App() {
   
     fetchData();
   }, [])
-
-  useEffect(() => {
-    if (currentLocation !== null){
-      updateMap(currentLocation);
-    }
-  }, [currentLocation])
 
   return (
     <div className="min-h-screen flex flex-col">

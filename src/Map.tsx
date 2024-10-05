@@ -3,6 +3,7 @@ import * as d3 from "d3";
 
 let global_xScale: any;
 let global_yScale: any;
+const tickSizeValue: number = 500;
 
 function loadLeftAxis(containerRef: any, svgRef: any, yScale: any) {
     const margin = { top: 0, right: 10, bottom: 40, left: 30 };
@@ -22,12 +23,13 @@ function loadLeftAxis(containerRef: any, svgRef: any, yScale: any) {
 
     // Create the axis
     const yAxis = d3.axisLeft(yScale)
-        .tickValues(d3.range(-90, 91, 10));
+        .tickValues(d3.range(-90, 91, 10))
+        .tickSize(tickSizeValue);
 
     // Append the axis to the g group
     svg.append('g')
         .attr('class', 'y-axis')
-        .attr('transform', `translate(${margin.left},${margin.top})`)
+        .attr('transform', `translate(${margin.left+tickSizeValue},${margin.top})`)
         .call(yAxis);
 
     svg.select('.y-axis path').style('stroke', 'none');
@@ -50,12 +52,13 @@ function loadBottomAxis(containerRef: any, svgRef: any, xScale: any) {
 
     // Create the axis
     const xAxis = d3.axisBottom(xScale)
-        .tickValues(d3.range(-180, 181, 20));
+        .tickValues(d3.range(-180, 181, 20))
+        .tickSize(tickSizeValue);
 
     // Append the axis to the g group
     svg.append('g')
         .attr('class', 'x-axis')
-        .attr('transform', `translate(${margin.left},${containerHeight - margin.bottom})`)
+        .attr('transform', `translate(${margin.left},${containerHeight - margin.bottom - tickSizeValue})`)
         .call(xAxis);
 
     svg.select('.x-axis path').style('stroke', 'none');
@@ -107,8 +110,8 @@ export default function Map() {
         loadBottomAxis(containerRef, svgRef, xScale);
 
         // Zoom behavior
-        const zoom = d3.zoom()
-            .on('zoom', (event) => {
+        const zoom: any= d3.zoom()
+            .on('zoom', (event: any) => {
 
                 // Get the scale factor only from the zoom event
                 const new_xScale = event.transform.rescaleX(xScale);
@@ -123,8 +126,8 @@ export default function Map() {
                 loadBottomAxis(containerRef, svgRef, global_xScale);
 
                 // Update the axes with the new scales
-                d3.select('.x-axis').call(d3.axisBottom(new_xScale).tickValues(d3.range(-180, 181, 20)));
-                d3.select('.y-axis').call(d3.axisLeft(new_yScale).tickValues(d3.range(-90, 91, 10)));
+                // d3.select('.x-axis').call(d3.axisBottom(new_xScale).tickValues(d3.range(-180, 181, 20).tickSize(tickSizeValue)));
+                // d3.select('.y-axis').call(d3.axisLeft(new_yScale).tickValues(d3.range(-90, 91, 10).tickSize(tickSizeValue)));
 
                 // Update the map points (or other graphical elements)
                 d3.selectAll('#mapPoints circle')
