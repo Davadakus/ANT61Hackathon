@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { parseRawMessages, parseMessage } from "./utils/parse.ts"
+import Map from "./Map.tsx"
 import rawText from './assets/updated_beacon_output.txt?raw';
 
 function App() {
@@ -40,7 +41,7 @@ function App() {
 
         {/* Second column */}
         <div className="grid grid-rows-3 gap-4">
-          <div className="bg-green-500 h-full">Longitude x Latitude</div>
+          <Map></Map>
           <div className="bg-green-500 h-full">Altitude Data</div>
           <div className="bg-green-500 h-full flex flex-col">
             <h1>Message ID: {messageId}</h1>
