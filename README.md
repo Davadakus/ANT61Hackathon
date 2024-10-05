@@ -11,6 +11,8 @@
 # Requirements
 List of requirments and where they can be found in the codebase. Video demonstration: https://youtu.be/Cik_anyDUuw
 
+![image](https://github.com/user-attachments/assets/c5e5d105-4750-4fd0-a2f1-81b7ffaae8e8)
+
 ## Data Parsing
 `/utils/parse.ts` was used to parse all the data from the text file containing the Beacon's Live Data.
 
