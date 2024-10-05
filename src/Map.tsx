@@ -169,7 +169,7 @@ export default function Map() {
     }, []);
 
     return (
-        <div ref={containerRef} id="mapContainer" className="bg-red-500 h-full grow">
+        <div ref={containerRef} id="mapContainer" className="bg-neutral-700 h-full grow rounded flex-1">
             <svg ref={svgRef}>
                 <g id="mapPoints"></g>
             </svg>
