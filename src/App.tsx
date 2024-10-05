@@ -40,10 +40,14 @@ function App() {
         </div>
 
         {/* Second column */}
-        <div className="grid grid-rows-3 gap-4">
-          <Map></Map>
-          <div className="bg-green-500 h-full">Altitude Data</div>
-          <div className="bg-green-500 h-full flex flex-col">
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-4 basis-2/3">
+            <div className="bg-green-500 h-full grow">
+              Altitude Data
+            </div>
+            <Map></Map>
+          </div>
+          <div className="bg-green-500 h-full flex flex-col basis-1/3">
             <h1>Message ID: {messageId}</h1>
             <h1>Location: {location && location[0]}, {location && location[1]}, {location && location[2]}</h1>
             <h1>Rotation: {rotation && rotation[0]}, {rotation && rotation[1]}, {rotation && rotation[2]}</h1>

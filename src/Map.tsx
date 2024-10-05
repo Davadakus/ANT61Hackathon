@@ -18,7 +18,7 @@ function loadLeftAxis(containerRef: any, svgRef: any){
     
     // Define the scale from -90 to 90
     const yScale = d3.scaleLinear()
-    .domain([-90, 90])  // Data range
+    .domain([-0, 90])  // Data range
     .range([height, 0]);  // Inverted because SVG y-coordinates grow downwards
 
     // Define the axis
@@ -56,7 +56,7 @@ function loadBottomAxis(containerRef: any, svgRef: any){
         
     // Append the axis to the SVG
     svg.append('g')
-        .attr('transform', `translate(${margin.left},${(containerHeight - height)/ 2})`)
+        .attr('transform', `translate(${margin.left},${(height)})`)
         .call(yAxis);
 }
 
@@ -72,7 +72,7 @@ export default function Map(){
     }, []);
 
     return (
-        <div ref={containerRef} className="bg-red-500 h-full">
+        <div ref={containerRef} className="bg-red-500 h-full grow">
             <svg ref={svgRef}></svg>
         </div>
     );
