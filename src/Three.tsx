@@ -1,3 +1,4 @@
+export default MyThree
 import * as THREE from 'three';
 import { useEffect, useState, useRef } from 'react';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
