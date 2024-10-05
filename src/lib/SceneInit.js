@@ -31,9 +31,9 @@ export default class SceneInit {
       this.fov,
       window.innerWidth / window.innerHeight,
       1,
-      5000
+      1000
     );
-    this.camera.position.z = 2000;
+    this.camera.position.z = 200;
 
     // NOTE: Specify a canvas which is already created in the HTML.
     const canvas = document.getElementById(this.canvasId);
@@ -65,11 +65,11 @@ export default class SceneInit {
     // if window resizes
     window.addEventListener('resize', () => this.onWindowResize(), false);
 
-    // NOTE: Load space background.
+    // // NOTE: Load space background.
     // this.loader = new THREE.TextureLoader();
     // this.scene.background = this.loader.load('./pics/space.jpeg');
 
-    // NOTE: Declare uniforms to pass into glsl shaders.
+    // // NOTE: Declare uniforms to pass into glsl shaders.
     // this.uniforms = {
     //   u_time: { type: 'f', value: 1.0 },
     //   colorB: { type: 'vec3', value: new THREE.Color(0xfff000) },

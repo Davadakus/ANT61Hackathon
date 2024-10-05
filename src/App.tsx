@@ -11,7 +11,7 @@ function App() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const duration: number = 1000;
+      const duration: number = 5000;
       const fakeMessageStream: string[] = await parseRawMessages(rawText);
       
       let i = 0;
