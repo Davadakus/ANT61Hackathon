@@ -29,7 +29,7 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <MyThree rotation={rotation}/>
+      <MyThree rotation={rotation} gryoAccel={gryoAccel}/>
       <h1 className="text-xl text-center font-bold"> 
         ANT61 Beacon Data Simulation
       </h1>
