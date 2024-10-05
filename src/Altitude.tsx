@@ -90,8 +90,8 @@ export default function Altitude() {
                 loadLeftAxis(containerRef, svgRef, global_altScale);
 
                 // Update the map points (or other graphical elements)
-                d3.selectAll('#mapPoints circle')
-                    .attr('cy', (d: any) => new_altScale(d[0]) + margin.top);
+                d3.selectAll('#altMapPoints circle')
+                    .attr('cy', (d: any) => new_altScale(d[2]) + margin.top);
         });
 
         d3.select(svgRef.current).call(zoom);
