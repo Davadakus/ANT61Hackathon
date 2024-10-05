@@ -1,3 +1,6 @@
+# Quickstart
+To run the web app, run `npm install` and `npm run dev` in the project root directory, then visit the link provided.
+
 # List of Libraries/Dependencies
 1. "d3": "^7.9.0"
 2. "react": "^18.3.1",
