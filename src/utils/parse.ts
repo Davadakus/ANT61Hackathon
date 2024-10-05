@@ -13,9 +13,9 @@ async function readTextFile(filePath: string): Promise<string> {
 function parseMessage(message: string): [string | null, number[] | null, number[] | null, number[] | null]  {
     message = message.split("Message")[1].trim();
     let messageId: string | null = message.split("V")[0] || null;
-    let location: number[] | null = message.split("L")[1]?.split("I")[0]?.slice(1,-1).split(",").map(Number) || null;
-    let rotation: number[] | null = message.split("R")[1]?.split("A")[0]?.slice(1,-1).split(",").map(Number) || null;
-    let gryoAccel: number[] | null = message.split("G")[1]?.split("I")[0]?.slice(1,-1).split(",").map(Number) || null;    
+    let location: number[] | null = message.split("L")[1]?.split("]")[0]?.slice(1).split(",").map(Number) || null;
+    let rotation: number[] | null = message.split("R")[1]?.split("]")[0]?.slice(1).split(",").map(Number) || null;
+    let gryoAccel: number[] | null = message.split("G")[1]?.split("]")[0]?.slice(1).split(",").map(Number) || null;    
     return [messageId, location, rotation, gryoAccel];
 }
 
