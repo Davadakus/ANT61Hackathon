@@ -5,9 +5,10 @@ import SceneInit from './lib/SceneInit';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 
-function MyThree({ rotation, gryoAccel }) {
+function MyThree({ pastRotation, rotation, gryoAccel }) {
   const [loadedModel, setLoadedModel] = useState(null);
   const [arrowHelpers, setArrowHelpers] = useState([]);
+  const [predictedArrowHelpers, setPredictedArrowHelpers] = useState([]);
   const [textLabels, setTextLabels] = useState([]); // State for text labels
   const [axisLabels, setAxisLabels] = useState([]); // State for axis labels
   const [font, setFont] = useState(null); // State to hold the loaded font
@@ -48,6 +49,7 @@ function MyThree({ rotation, gryoAccel }) {
     );
   }, []);
 
+  // initialize arrows and text
   useEffect(() => {
     const sceneInit = new SceneInit('myThreeJsCanvas');
     sceneInit.initialize();
@@ -73,8 +75,15 @@ function MyThree({ rotation, gryoAccel }) {
     const arrowHelperY = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), origin, length, 0x0000ff, 10, 10);
     const arrowHelperZ = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), origin, length, 0x00ff00, 10, 10);
   
+    const predictedArrowHelperX = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), origin, length, 0x330000, 10, 10);
+    const predictedArrowHelperY = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), origin, length, 0x000033, 10, 10);
+    const predictedArrowHelperZ = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), origin, length, 0x003300, 10, 10);
+  
     setArrowHelpers([arrowHelperX, arrowHelperY, arrowHelperZ]);
+    setPredictedArrowHelpers([predictedArrowHelperX, predictedArrowHelperY, predictedArrowHelperZ]);
+
     sceneInit.scene.add(arrowHelperX, arrowHelperY, arrowHelperZ);
+    sceneInit.scene.add(predictedArrowHelperX, predictedArrowHelperY, predictedArrowHelperZ);
     
     // Create text labels for the arrows
     const labels = [
@@ -135,6 +144,7 @@ function MyThree({ rotation, gryoAccel }) {
   }, [textLabels]);
 
   // Calculation of Text on scene
+  // Updating arrows and text
   useEffect(() => {
     if (loadedModel) {
       if (rotation) {
@@ -142,11 +152,26 @@ function MyThree({ rotation, gryoAccel }) {
         const pitch = THREE.MathUtils.degToRad(rotation[1]);
         const roll = THREE.MathUtils.degToRad(rotation[2]);
   
+        const yaw_accel = THREE.MathUtils.degToRad(gryoAccel[0]);
+        const pitch_accel = THREE.MathUtils.degToRad(gryoAccel[1]);
+        const roll_accel = THREE.MathUtils.degToRad(gryoAccel[2]);
+  
         loadedModel.scene.rotation.set(pitch, yaw, roll);
   
         const modelQuaternion = new THREE.Quaternion();
         modelQuaternion.setFromEuler(new THREE.Euler(pitch, yaw, roll));
   
+        /*
+          x = 1/2 * at^2 + v_0t + x_0
+          v_0 = (x_0 - x_{-1}) / 2
+        */
+        const dt = 1000;
+        const predicted_yaw = (yaw_accel/2)*dt**2 + ((pastRotation[0]-yaw)/2)*dt + yaw;
+        const predicted_pitch = (pitch_accel/2)*dt**2 + ((pastRotation[1]-pitch)/2)*dt + pitch;
+        const predicted_roll = (roll_accel/2)*dt**2 + ((pastRotation[2]-roll)/2)*dt + roll;
+
+        const predictedQuarternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(predicted_pitch, predicted_yaw, predicted_roll));
+
         // Update arrow directions based on the model's rotation
         arrowHelpers.forEach((arrow, index) => {
           const direction = new THREE.Vector3();
@@ -156,6 +181,20 @@ function MyThree({ rotation, gryoAccel }) {
   
           // Apply the model's quaternion to get the correct direction
           direction.applyQuaternion(modelQuaternion);
+          arrow.setDirection(direction);
+  
+          // Position the arrow at the origin
+          arrow.position.copy(new THREE.Vector3(0, 0, 0));
+        });
+
+        predictedArrowHelpers.forEach((arrow, index) => {
+          const direction = new THREE.Vector3();
+          if (index === 0) direction.set(1, 0, 0); // X-axis
+          else if (index === 1) direction.set(0, 1, 0); // Y-axis
+          else if (index === 2) direction.set(0, 0, 1); // Z-axis
+  
+          // Apply the model's quaternion to get the correct direction
+          direction.applyQuaternion(predictedQuarternion);
           arrow.setDirection(direction);
   
           // Position the arrow at the origin
@@ -195,7 +234,7 @@ function MyThree({ rotation, gryoAccel }) {
         setTextLabels(updatedLabels);
       }
     }
-  }, [rotation, loadedModel, arrowHelpers, gryoAccel]);
+  }, [rotation, loadedModel, arrowHelpers, gryoAccel, predictedArrowHelpers]);
   
 
   return <canvas

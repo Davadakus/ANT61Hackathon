@@ -12,6 +12,7 @@ function App() {
   const [currentLocation, setCurrentLocation] = useState([0,0,0]);
   const [messageId, setMessageId] = useState("");
   const [rotation, setRotation] = useState([0, 0, 0]);
+  const [pastRotation, setPastRotation] = useState([0, 0, 0]);
   const [gryoAccel, setGryoAccel] = useState([0, 0, 0]);
 
   const indexRef: any = useRef(0);
@@ -36,7 +37,10 @@ function App() {
 
         // Update states based on the parsed message
         if (newMessageId !== null) setMessageId(() => newMessageId);
-        if (newRotation !== null) setRotation(() => newRotation);
+        if (newRotation !== null) setRotation(() => {
+          setPastRotation(rotation);
+          return newRotation;
+        });
         if (newGryoAccel !== null) setGryoAccel(() => newGryoAccel);
         if (newLocation !== null) {
           setCurrentLocation(() => {
@@ -72,7 +76,7 @@ function App() {
         <div className="flex flex-col space-y-4">
           <div className="bg-blue-500 flex-1 overflow-hidden relative">
             Simulation
-            <MyThree rotation={rotation} gryoAccel={gryoAccel}/>
+            <MyThree pastRotation={pastRotation} rotation={rotation} gryoAccel={gryoAccel}/>
           </div>
         </div>
 
