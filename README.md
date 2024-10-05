@@ -1,50 +1,32 @@
-# React + TypeScript + Vite
+# List of Libraries/Dependencies
+1. "d3": "^7.9.0"
+2. "react": "^18.3.1",
+3. "react-dom": "^18.3.1",
+4. "three": "^0.169.0",
+5. "three-stdlib": "^2.33.0"
+6. TailWind
+7. Vite
+8. TypeScript
+   
+# Requirements
+List of requirments and where they can be found in the codebase
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Data Parsing
+`/utils/parse.ts` was used to parse all the data from the text file containing the Beacon's Live Data.
 
-Currently, two official plugins are available:
+## Visualization
+1. The visualization logic of the Beacon's live position is all entirely in `Three.tsx` and `/lib/SceneInit.tsx`, used as a set-up for the canvas to display the visualization of the Beacon. 
+2. The component is then exported as `<MyThree />` into `App.tsx` on line X which will display the orientation and gyroscopic acceleration of the Beacon.
+3. Live data is constantly being passed into the `<MyThree />` component which processes the data and reflect it in the canvas by updating its rotational data and gyroscopic acceleration at `Lines 148-237` in `Three.tsx`. The data being parsed in is also displayed on `App.tsx` on `Lines 98-161`.
+4. Visual Location of the Beacon is processed in `Altitude.tsx` for the Altitude and `Map.tsx` for Longitude and Latitude. The component can also be found in `App.tsx` where it is displayed on the web app.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## User Interaction
+Users are able to interact with the live visualization by moving, orientating, and zooming in to the Beacon that is being displayed on a XYZ plane. Users will have a good look of the beacon rotating and seeing the numbers update in real-time.
 
-## Expanding the ESLint configuration
+## Real-Time Updates
+Like mentioned, the messages that are received are directly reflected in the visualization and table on the bottom right of the web app.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## Optional Extension
+Predictive analysis was used based on the model using the formula below to calculate the future orientation of the Beacon.
+$$x-\frac{1}{2}at^2+\frac{x_0-x_{-1}}{2}t+x_0$$
+This can also be found at `Three.jsx` starting from `Lines 164`.
