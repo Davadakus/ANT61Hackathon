@@ -68,18 +68,17 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-neutral-700">
-      <div className="text-xl text-center font-bold mt-3"> 
-        ANT61 Beacon Data Simulation
+      <div className="text-xl text-center font-bold mt-3 bg-stone-900 p-2"> 
+        ANT61 Beacon Data Visualizer
       </div>
       <div className="grid grid-cols-2 gap-4 p-4 flex-1">
         
         {/* First column */}
-        <div className="flex flex-col p-4 bg-stone-900 rounded space-y-4">
+        <div className="flex flex-col p-2 bg-stone-900 rounded space-y-4">
           <div>
             <h1 className="text-2xl text-center font-bold">Simulated Beacon</h1>
           </div>
-          <div className="bg-blue-500 flex-1 overflow-hidden relative rounded">
-            Simulation
+          <div className="bg-neutral-700 flex-1 overflow-hidden relative rounded">
             <MyThree pastRotation={pastRotation} rotation={rotation} gryoAccel={gryoAccel}/>
           </div>
         </div>
@@ -88,11 +87,11 @@ function App() {
         <div className="flex flex-col gap-4">
           <h1 className="flex flex-row gap-4 h-2/3">
             <h2 className="flex flex-col bg-stone-900 p-4 w-1/3 rounded">
-              <h3 className="flex flex-col text-center text-xl">Altitude</h3>
+              <h3 className="flex flex-col text-center text-xl pb-2 font-bold">Altitude (km)</h3>
               <Altitude />
             </h2>
             <h2 className="flex flex-col  bg-stone-900 text-xl p-4 w-2/3 rounded">
-              <h3 className="flex flex-col text-center pb-2">Map</h3>
+              <h3 className="flex flex-col text-center pb-2 font-bold">Location (Longitude & Latitude)</h3>
               <Map />
             </h2>
           </h1>
@@ -145,17 +144,17 @@ function App() {
               {/* Gyroscopic Acceleration Row */}
               <h1 className="col-span-1">Gyroscopic Acceleration:</h1>
               <div className="col-span-1 flex justify-between">
-                <h1>{gryoAccel && gryoAccel[0]?.toFixed(2)} rad/s²</h1>
+                <h1>{gryoAccel && gryoAccel[0]?.toFixed(2)} deg/s²</h1>
                 <span>(X-axis)</span>
               </div>
               <h1 className="col-span-1"></h1> {/* Empty space for alignment */}
               <div className="col-span-1 flex justify-between">
-                <h1>{gryoAccel && gryoAccel[1]?.toFixed(2)} rad/s²</h1>
+                <h1>{gryoAccel && gryoAccel[1]?.toFixed(2)} deg/s²</h1>
                 <span>(Y-axis)</span>
               </div>
               <h1 className="col-span-1"></h1> {/* Empty space for alignment */}
               <div className="col-span-1 flex justify-between">
-                <h1>{gryoAccel && gryoAccel[2]?.toFixed(2)} rad/s²</h1>
+                <h1>{gryoAccel && gryoAccel[2]?.toFixed(2)} deg/s²</h1>
                 <span>(Z-axis)</span>
               </div>
             </div>

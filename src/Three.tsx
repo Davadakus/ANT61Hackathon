@@ -218,9 +218,9 @@ function MyThree({ pastRotation, rotation, gryoAccel }) {
           sceneInitRef.current.scene.remove(label);
           
           // Create a new label with the updated text (gryoAccel values)
-          const newText = index === 0 ? `X: ${gryoAccel[0].toFixed(2)}` :
-                          index === 1 ? `Y: ${gryoAccel[1].toFixed(2)}` :
-                                        `Z: ${gryoAccel[2].toFixed(2)}`;
+          const newText = index === 0 ? `Yaw Accel. (X): ${gryoAccel[0].toFixed(2)}` :
+                          index === 1 ? `Pitch Accel. (Y): ${gryoAccel[1].toFixed(2)}` :
+                                        `Roll Accel. (Z): ${gryoAccel[2].toFixed(2)}`;
           const updatedLabel = createTextLabel(newText, textLabelPosition);
           
           // Add the updated label to the scene
