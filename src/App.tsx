@@ -1,6 +1,29 @@
-import MyThree from './Three.jsx';
+import { useEffect, useState } from 'react';
+import { parseRawMessages, parseMessage } from "./utils/parse.ts"
+import rawText from './assets/updated_beacon_output.txt?raw';
 
 function App() {
+  const [currentMessage, setCurrentMessage] = useState("")
+  let [messageId, location, rotation, gryoAccel] = parseMessage(currentMessage);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const duration: number = 3000;
+      const fakeMessageStream: string[] = await parseRawMessages(rawText);
+      
+      let i = 0;
+      const timeout = setInterval(() => { 
+        setCurrentMessage(fakeMessageStream[i]);
+        i += 1;
+        if (i >= fakeMessageStream.length) {
+          clearInterval(timeout);
+        }
+      }, duration);
+    };
+  
+    fetchData();
+  }, [])
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* <MyThree /> */}
@@ -19,7 +42,12 @@ function App() {
         <div className="grid grid-rows-3 gap-4">
           <div className="bg-green-500 h-full">Longitude x Latitude</div>
           <div className="bg-green-500 h-full">Altitude Data</div>
-          <div className="bg-green-500 h-full">Parsed Data</div>
+          <div className="bg-green-500 h-full flex flex-col">
+            <h1>Message ID: {messageId}</h1>
+            <h1>Location: {location && location[0]}, {location && location[1]}, {location && location[2]}</h1>
+            <h1>Rotation: {rotation && rotation[0]}, {rotation && rotation[1]}, {rotation && rotation[2]}</h1>
+            <h1>Gyroscopic Acceleration: {gryoAccel && gryoAccel[0]}, {gryoAccel && gryoAccel[1]}, {gryoAccel && gryoAccel[2]}</h1>
+          </div>
         </div>
       </div>
     </div>
