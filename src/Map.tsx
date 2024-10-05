@@ -1,131 +1,144 @@
 import { useRef, useEffect } from "react";
 import * as d3 from "d3";
 
-function loadLeftAxis(containerRef: any, svgRef: any, gRef: any){
-    const margin = { top: 0, right: 10, bottom: 40, left: 30 }; // Margin for g in svg
+let global_xScale: any;
+let global_yScale: any;
+
+function loadLeftAxis(containerRef: any, svgRef: any, yScale: any) {
+    const margin = { top: 0, right: 10, bottom: 40, left: 30 };
     const containerWidth = containerRef.current.clientWidth;
     const containerHeight = containerRef.current.clientHeight;
 
-    const width = containerWidth - margin.left - margin.right;
     const height = containerHeight - margin.top - margin.bottom;
-    
-    // Create the SVG container
+
     const svg = d3.select(svgRef.current)
         .attr('viewBox', `0 0 ${containerWidth} ${containerHeight}`)
-        .attr('preserveAspectRatio', 'xMidYMid meet')  
-        .attr('width', '100%')  
-        .attr('height', '100%');  
-    
-    // Define the scale from -90 to 90
-    const yScale = d3.scaleLinear()
-    .domain([-90, 90])  // Data range
-    .range([height, 0]);  // Inverted because SVG y-coordinates grow downwards
-
-    // Define the axis
-    const yAxis = d3.axisLeft(yScale)
-        .tickValues(d3.range(-90, 91, 10)); 
-    
-    // Append the axis to the SVG
-    const g = d3.select(gRef.current);
-    g.append('g')
-        .attr('transform', `translate(${margin.left},${(containerHeight - height)/ 2})`)
-        .call(yAxis);
-}
-
-function loadBottomAxis(containerRef: any, svgRef: any, gRef: any){
-    const margin = { top: 5, right: 10, bottom: 15, left: 30 }; // Margin for g in svg
-    const containerWidth = containerRef.current.clientWidth;
-    const containerHeight = containerRef.current.clientHeight;
-
-    const width = containerWidth - margin.left - margin.right;
-    const height = containerHeight - margin.top - margin.bottom;
-    
-    // Create the SVG container
-    const svg = d3.select(svgRef.current)
-        .attr('viewBox', `0 0 ${containerWidth} ${containerHeight}`)
-        .attr('preserveAspectRatio', 'xMidYMid meet')  
-        .attr('width', '100%')  
-        .attr('height', '100%');  
-    
-    // Define the scale from -90 to 90
-    const xScale = d3.scaleLinear()
-    .domain([-180, 180])
-    .range([width, 0]);  // Inverted because SVG y-coordinates grow downwards
-
-    // Define the axis
-    const yAxis = d3.axisBottom(xScale)
-        .tickValues(d3.range(-180, 181, 20)); 
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .attr('width', '100%')
+        .attr('height', '100%');
 
         
-    // Append the axis to the SVG
-    const g = d3.select(gRef.current);
-    g.append('g')
-        .attr('transform', `translate(${margin.left},${(height)})`)
-        .call(yAxis)
+    svg.select('.y-axis').remove();
+
+    // Create the axis
+    const yAxis = d3.axisLeft(yScale)
+        .tickValues(d3.range(-90, 91, 10));
+
+    // Append the axis to the g group
+    svg.append('g')
+        .attr('class', 'y-axis')
+        .attr('transform', `translate(${margin.left},${margin.top})`)
+        .call(yAxis);
+
+    svg.select('.y-axis path').style('stroke', 'none');
 }
 
-export function updateMap(locationData: number[]) {
-    const container = document.querySelector("#mapContainer");
-    if (container === null){
-        return;
-    }
-    const margin = { top: 10, right: 10, bottom: 40, left: 30 };
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
+function loadBottomAxis(containerRef: any, svgRef: any, xScale: any) {
+    const margin = { top: 5, right: 10, bottom: 15, left: 30 };
+    const containerWidth = containerRef.current.clientWidth;
+    const containerHeight = containerRef.current.clientHeight;
 
     const width = containerWidth - margin.left - margin.right;
-    const height = containerHeight - margin.top - margin.bottom;
 
-    const latitude = locationData[0];
-    const longitude = locationData[1];
+    const svg = d3.select(svgRef.current)
+        .attr('viewBox', `0 0 ${containerWidth} ${containerHeight}`)
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .attr('width', '100%')
+        .attr('height', '100%');
 
-    // Define the scales for latitude and longitude
-    const yScale = d3.scaleLinear()
-        .domain([-90, 90])  // Latitude from -90 to 90 degrees
-        .range([height, 0]);  // Inverted to map SVG coordinates
+    svg.select('.x-axis').remove();
 
-    const xScale = d3.scaleLinear()
-        .domain([-180, 180])  // Longitude from -180 to 180 degrees
-        .range([0, width]);
+    // Create the axis
+    const xAxis = d3.axisBottom(xScale)
+        .tickValues(d3.range(-180, 181, 20));
 
+    // Append the axis to the g group
+    svg.append('g')
+        .attr('class', 'x-axis')
+        .attr('transform', `translate(${margin.left},${containerHeight - margin.bottom})`)
+        .call(xAxis);
+
+    svg.select('.x-axis path').style('stroke', 'none');
+}
+
+// Update map function to use the zoomed scales
+export function updateMap(locationData: number[]) {
+    const container = document.querySelector("#mapContainer");
+    if (container === null || !global_xScale || !global_yScale) {
+        return;
+    }
+
+    const margin = { top: 10, right: 10, bottom: 40, left: 30 };
+
+    // Use the global rescaled xScale and yScale
     d3.select("#mapPoints")
         .selectAll('circle')
         .data([locationData])  // Bind the array of points
         .join('circle')
         .attr('fill', 'blue')
-        .attr('cx', xScale(longitude) + margin.left)  // Use xScale for longitude
-        .attr('cy', yScale(latitude) + margin.top)   // Use yScale for latitude
+        .attr('cx', (d: any) => global_xScale(d[1]) + margin.left)  // Use rescaled longitude
+        .attr('cy', (d: any) => global_yScale(d[0]) + margin.top)   // Use rescaled latitude
         .attr('r', 5);
 }
 
-
-export default function Map(){
+export default function Map() {
     const svgRef = useRef<SVGSVGElement | null>(null);
     const containerRef = useRef<HTMLDivElement | null>(null);
-    const gRef = useRef<SVGGElement | null>(null); // Reference for the zoomable group
 
     useEffect(() => {
-        if (!containerRef.current || !svgRef.current || !gRef.current) return;
-        loadLeftAxis(containerRef, svgRef, gRef);
-        loadBottomAxis(containerRef, svgRef, gRef);
+        if (!containerRef.current || !svgRef.current) return;
 
-        let zoom = d3.zoom()
-            .on('zoom', (e) => {
-                d3.select(gRef.current)
-                    .attr('transform', e.transform);
+        const margin = { top: 10, right: 10, bottom: 40, left: 30 };
+        const containerWidth = containerRef.current.clientWidth;
+        const containerHeight = containerRef.current.clientHeight;
+
+        const width = containerWidth - margin.left - margin.right;
+        const height = containerHeight - margin.top - margin.bottom;
+
+        // Define initial scales
+        const xScale = d3.scaleLinear().domain([-180, 180]).range([0, width]);
+        const yScale = d3.scaleLinear().domain([-90, 90]).range([height, 0]);
+
+        global_xScale = xScale;
+        global_yScale = yScale;
+
+        // Load initial axes
+        loadLeftAxis(containerRef, svgRef, yScale);
+        loadBottomAxis(containerRef, svgRef, xScale);
+
+        // Zoom behavior
+        const zoom = d3.zoom()
+            .on('zoom', (event) => {
+
+                // Get the scale factor only from the zoom event
+                const new_xScale = event.transform.rescaleX(xScale);
+                const new_yScale = event.transform.rescaleY(yScale);
+
+                // Update the global scales
+                global_xScale = new_xScale;
+                global_yScale = new_yScale;
+
+                // Clear and redraw axes with the updated scales
+                loadLeftAxis(containerRef, svgRef, global_yScale);
+                loadBottomAxis(containerRef, svgRef, global_xScale);
+
+                // Update the axes with the new scales
+                d3.select('.x-axis').call(d3.axisBottom(new_xScale).tickValues(d3.range(-180, 181, 20)));
+                d3.select('.y-axis').call(d3.axisLeft(new_yScale).tickValues(d3.range(-90, 91, 10)));
+
+                // Update the map points (or other graphical elements)
+                d3.selectAll('#mapPoints circle')
+                    .attr('cx', (d: any) => new_xScale(d[1]) + margin.left)
+                    .attr('cy', (d: any) => new_yScale(d[0]) + margin.top);
             });
-        d3.select(svgRef.current)
-            .call(zoom);
 
+        d3.select(svgRef.current).call(zoom);
     }, []);
 
     return (
         <div ref={containerRef} id="mapContainer" className="bg-red-500 h-full grow">
             <svg ref={svgRef}>
-                <g ref={gRef}>  
-                    {/* All axes and map points will be inside this group for zooming */}
-                    <g id="mapPoints"></g>
-                </g>
+                <g id="mapPoints"></g>
             </svg>
         </div>
     );
