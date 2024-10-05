@@ -9,7 +9,7 @@
 8. TypeScript
    
 # Requirements
-List of requirments and where they can be found in the codebase
+List of requirments and where they can be found in the codebase. Video demonstration: https://youtu.be/Cik_anyDUuw
 
 ## Data Parsing
 `/utils/parse.ts` was used to parse all the data from the text file containing the Beacon's Live Data.
@@ -27,6 +27,7 @@ Users are able to interact with the live visualization by moving, orientating, a
 Like mentioned, the messages that are received are directly reflected in the visualization and table on the bottom right of the web app.
 
 ## Optional Extension
-Predictive analysis was used based on the model using the formula below to calculate the future orientation of the Beacon.
+Predictive analysis was used based on the model using the formula below to calculate the future orientation of the Beacon. A simple kinematic model was used to predict the future orientation of the beacon.
 $$x-\frac{1}{2}at^2+\frac{x_0-x_{-1}}{2}t+x_0$$
+
 This can also be found at `Three.jsx` starting from `Lines 164`.
