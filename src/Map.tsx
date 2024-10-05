@@ -6,7 +6,7 @@ let global_yScale: any;
 const tickSizeValue: number = 500;
 
 function loadLeftAxis(containerRef: any, svgRef: any, yScale: any) {
-    const margin = { top: 0, right: 10, bottom: 40, left: 30 };
+    const margin = { top: 10, right: 10, bottom: 40, left: 30 };
     const containerWidth = containerRef.current.clientWidth;
     const containerHeight = containerRef.current.clientHeight;
 
@@ -107,7 +107,6 @@ export function updateMap(locationData: number[]) {
         .attr('cy', (d: any) => global_yScale(d[0]) + margin.top)   // Use rescaled latitude
         .attr('r', 5)
         .style("z-index", 50)
-        .attr("id", "mapBgImage");
 }
 
 export default function Map() {
@@ -138,7 +137,7 @@ export default function Map() {
         // Zoom behavior
         const zoom: any= d3.zoom()
             .translateExtent([   // Set panning limits based on the axes bounds
-                [-margin.left, -margin.top],   // Upper left corner (min x, min y)
+                [0, 0],   // Upper left corner (min x, min y)
                 [containerWidth, height + margin.bottom]  // Bottom right corner (max x, max y)
             ])
             .scaleExtent([1, 10])  // Set minimum scale 1 (no zoom out) and max scale 10 (upper zoom bound)

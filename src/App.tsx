@@ -1,7 +1,8 @@
 import MyThree from './Three.js';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, Ref} from 'react';
 import { parseRawMessages, parseMessage } from "./utils/parse.ts"
 import Map, { updateMap } from "./Map.tsx"
+import Altitude, { updateAltMap } from './Altitude.tsx';
 import rawText from './assets/updated_beacon_output.txt?raw';
 
 
@@ -13,35 +14,52 @@ function App() {
   const [rotation, setRotation] = useState([0, 0, 0]);
   const [gryoAccel, setGryoAccel] = useState([0, 0, 0]);
 
+  const indexRef: any = useRef(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     const fetchData = async () => {
-      const duration: number = 5000;
+      const duration: number = 1000;
       const fakeMessageStream: string[] = await parseRawMessages(rawText);
       
-      let i = 0;
-      const timeout = setInterval(() => { 
+      // Clear any previous interval if exists (cleanup)
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+
+      intervalRef.current = setInterval(() => { 
+        const i = indexRef.current;
         const newMessage = fakeMessageStream[i];
         setCurrentMessage(newMessage);
 
         const [newMessageId, newLocation, newRotation, newGryoAccel] = parseMessage(newMessage);
 
         // Update states based on the parsed message
-        if (newMessageId !== null) setMessageId(newMessageId);
-        if (newRotation !== null) setRotation(newRotation);
-        if (newGryoAccel !== null) setGryoAccel(newGryoAccel);
+        if (newMessageId !== null) setMessageId(() => newMessageId);
+        if (newRotation !== null) setRotation(() => newRotation);
+        if (newGryoAccel !== null) setGryoAccel(() => newGryoAccel);
         if (newLocation !== null) {
-          setCurrentLocation(newLocation);
-          updateMap(newLocation);
+          setCurrentLocation(() => {
+            updateMap(newLocation);     // Update the map
+            updateAltMap(newLocation);  // Update the altitude map
+            return newLocation;         // Return the updated location
+          });
         }
 
-        i += 1;
-        if (i >= fakeMessageStream.length) {
-          clearInterval(timeout);
+        indexRef.current += 1;  // Increment the ref value for the next iteration
+        if (indexRef.current >= fakeMessageStream.length) {
+          clearInterval(intervalRef.current);
         }
       }, duration);
     };
   
     fetchData();
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
   }, [])
 
   return (
@@ -61,9 +79,7 @@ function App() {
         {/* Second column */}
         <div className="flex flex-col gap-4">
           <div className="flex gap-4 basis-2/3">
-            <div className="bg-green-500 h-full grow">
-              Altitude Data
-            </div>
+            <Altitude></Altitude> 
             <Map></Map>
           </div>
           <div className="bg-green-500 h-full flex flex-col basis-1/3">
