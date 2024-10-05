@@ -1,7 +1,8 @@
 import MyThree from './Three.js';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, Ref} from 'react';
 import { parseRawMessages, parseMessage } from "./utils/parse.ts"
 import Map, { updateMap } from "./Map.tsx"
+import Altitude, { updateAltMap } from './Altitude.tsx';
 import rawText from './assets/updated_beacon_output.txt?raw';
 
 
@@ -11,37 +12,58 @@ function App() {
   const [currentLocation, setCurrentLocation] = useState([0,0,0]);
   const [messageId, setMessageId] = useState("");
   const [rotation, setRotation] = useState([0, 0, 0]);
+  const [pastRotation, setPastRotation] = useState([0, 0, 0]);
   const [gryoAccel, setGryoAccel] = useState([0, 0, 0]);
+
+  const indexRef: any = useRef(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const duration: number = 5000;
+      const duration: number = 1000;
       const fakeMessageStream: string[] = await parseRawMessages(rawText);
       
-      let i = 0;
-      const timeout = setInterval(() => { 
+      // Clear any previous interval if exists (cleanup)
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+
+      intervalRef.current = setInterval(() => { 
+        const i = indexRef.current;
         const newMessage = fakeMessageStream[i];
         setCurrentMessage(newMessage);
 
         const [newMessageId, newLocation, newRotation, newGryoAccel] = parseMessage(newMessage);
 
         // Update states based on the parsed message
-        if (newMessageId !== null) setMessageId(newMessageId);
-        if (newRotation !== null) setRotation(newRotation);
-        if (newGryoAccel !== null) setGryoAccel(newGryoAccel);
+        if (newMessageId !== null) setMessageId(() => newMessageId);
+        if (newRotation !== null) setRotation(() => {
+          setPastRotation(rotation);
+          return newRotation;
+        });
+        if (newGryoAccel !== null) setGryoAccel(() => newGryoAccel);
         if (newLocation !== null) {
-          setCurrentLocation(newLocation);
-          updateMap(newLocation);
+          setCurrentLocation(() => {
+            updateMap(newLocation);     // Update the map
+            updateAltMap(newLocation);  // Update the altitude map
+            return newLocation;         // Return the updated location
+          });
         }
 
-        i += 1;
-        if (i >= fakeMessageStream.length) {
-          clearInterval(timeout);
+        indexRef.current += 1;  // Increment the ref value for the next iteration
+        if (indexRef.current >= fakeMessageStream.length) {
+          clearInterval(intervalRef.current);
         }
       }, duration);
     };
   
     fetchData();
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
   }, [])
 
   return (
@@ -58,7 +80,7 @@ function App() {
           </div>
           <div className="bg-blue-500 flex-1 overflow-hidden relative rounded">
             Simulation
-            <MyThree rotation={rotation} gryoAccel={gryoAccel}/>
+            <MyThree pastRotation={pastRotation} rotation={rotation} gryoAccel={gryoAccel}/>
           </div>
         </div>
         
@@ -67,10 +89,10 @@ function App() {
           <h1 className="flex flex-row gap-4 h-2/3">
             <h2 className="flex flex-col bg-stone-900 p-4 w-1/4 rounded">
               <h3 className="text-xl flex grow flex-col text-center">Altitude</h3>
-              <h3 className="bg-neutral-700 h-full grow rounded">Altitude Content </h3>
+              <Altitude />
             </h2>
             <h2 className="text-xl flex flex-col bg-stone-900 p-4 w-full rounded">
-              <h3 className="flex flex-col"> Map</h3>
+              <h3 className="flex flex-col text-center pb-2"> Map</h3>
               <Map />
             </h2>
           </h1>
