@@ -1,4 +1,4 @@
-import MyThree from './Three.jsx';
+import MyThree from './Three.js';
 import { useEffect, useState } from 'react';
 import { parseRawMessages, parseMessage } from "./utils/parse.ts"
 import rawText from './assets/updated_beacon_output.txt?raw';
