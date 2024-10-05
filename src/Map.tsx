@@ -64,6 +64,30 @@ function loadBottomAxis(containerRef: any, svgRef: any, xScale: any) {
     svg.select('.x-axis path').style('stroke', 'none');
 }
 
+// // Function to add the world map background image
+// import imgUrl from "./assets/map.jpg";
+// // Function to add the world map background image and align it with axes
+// function addWorldMapBackground(svgRef: any, xScale: any, yScale: any, margin: any) {
+//     const svg = d3.select(svgRef.current);
+
+//     // Remove any existing background image
+//     svg.select('.world-map-bg').remove();
+
+//     // Calculate width and height of the image based on axis scales
+//     const width = xScale(180) - xScale(-180);  // Corresponding to longitude range [-180, 180]
+//     const height = yScale(-90) - yScale(90);   // Corresponding to latitude range [-90, 90]
+
+//     // Add the world map background image
+//     svg.insert('image', ":first-child")
+//         .attr('class', 'world-map-bg')
+//         .attr('href', imgUrl)  // The URL of the world map image
+//         .attr('width', width)
+//         .attr('height', height)
+//         .attr('x', xScale(-180)+ margin.left)  // Align the image with the xScale (starting at -180 longitude)
+//         .attr('y', yScale(90)+ 15);   // Align the image with the yScale (starting at 90 latitude)
+// }
+
+
 // Update map function to use the zoomed scales
 export function updateMap(locationData: number[]) {
     const container = document.querySelector("#mapContainer");
@@ -81,7 +105,9 @@ export function updateMap(locationData: number[]) {
         .attr('fill', 'blue')
         .attr('cx', (d: any) => global_xScale(d[1]) + margin.left)  // Use rescaled longitude
         .attr('cy', (d: any) => global_yScale(d[0]) + margin.top)   // Use rescaled latitude
-        .attr('r', 5);
+        .attr('r', 5)
+        .style("z-index", 50)
+        .attr("id", "mapBgImage");
 }
 
 export default function Map() {
@@ -111,6 +137,11 @@ export default function Map() {
 
         // Zoom behavior
         const zoom: any= d3.zoom()
+            .translateExtent([   // Set panning limits based on the axes bounds
+                [-margin.left, -margin.top],   // Upper left corner (min x, min y)
+                [containerWidth, height + margin.bottom]  // Bottom right corner (max x, max y)
+            ])
+            .scaleExtent([1, 10])  // Set minimum scale 1 (no zoom out) and max scale 10 (upper zoom bound)
             .on('zoom', (event: any) => {
 
                 // Get the scale factor only from the zoom event
