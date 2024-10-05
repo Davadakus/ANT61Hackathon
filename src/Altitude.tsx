@@ -45,7 +45,7 @@ export function updateAltMap(locationData: number[]){
         .selectAll('circle')
         .data([locationData])  // Bind the array of points
         .join('circle')
-        .attr('fill', 'blue')
+        .attr('fill', '#e5e7eb')
         .attr('cx', container.clientWidth / 2)  // Use rescaled longitude
         .attr('cy', (d: any) => global_altScale(d[2]) + margin.top)   // Use rescaled latitude
         .attr('r', 5)
@@ -58,7 +58,7 @@ export default function Altitude() {
 
     useEffect(()=>{
         if (!containerRef.current) return;
-        const margin = { top: 10, right: 10, bottom: 40, left: 30 };
+        const margin = { top: 10, right: 10, bottom: 10, left: 30 };
 
         const containerWidth = containerRef.current.clientWidth;
         const containerHeight = containerRef.current.clientHeight;
@@ -98,7 +98,7 @@ export default function Altitude() {
     }, [])
 
     return (
-        <div ref={containerRef} id="altMapContainer" className="bg-blue-500 h-full grow">
+        <div ref={containerRef} id="altMapContainer" className="bg-neutral-700 h-full grow rounded flex-1">
             <svg ref={svgRef}>
                 <g id="altMapPoints"></g>
             </svg>

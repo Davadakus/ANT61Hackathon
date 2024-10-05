@@ -87,12 +87,12 @@ function App() {
         {/* Second column */}
         <div className="flex flex-col gap-4">
           <h1 className="flex flex-row gap-4 h-2/3">
-            <h2 className="flex flex-col bg-stone-900 p-4 w-1/4 rounded">
-              <h3 className="text-xl flex grow flex-col text-center">Altitude</h3>
+            <h2 className="flex flex-col bg-stone-900 p-4 w-1/3 rounded">
+              <h3 className="flex flex-col text-center text-xl">Altitude</h3>
               <Altitude />
             </h2>
-            <h2 className="text-xl flex flex-col bg-stone-900 p-4 w-full rounded">
-              <h3 className="flex flex-col text-center pb-2"> Map</h3>
+            <h2 className="flex flex-col  bg-stone-900 text-xl p-4 w-2/3 rounded">
+              <h3 className="flex flex-col text-center pb-2">Map</h3>
               <Map />
             </h2>
           </h1>

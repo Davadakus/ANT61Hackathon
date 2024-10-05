@@ -102,7 +102,7 @@ export function updateMap(locationData: number[]) {
         .selectAll('circle')
         .data([locationData])  // Bind the array of points
         .join('circle')
-        .attr('fill', 'blue')
+        .attr('fill', '#e5e7eb')
         .attr('cx', (d: any) => global_xScale(d[1]) + margin.left)  // Use rescaled longitude
         .attr('cy', (d: any) => global_yScale(d[0]) + margin.top)   // Use rescaled latitude
         .attr('r', 5)
@@ -116,7 +116,7 @@ export default function Map() {
     useEffect(() => {
         if (!containerRef.current || !svgRef.current) return;
 
-        const margin = { top: 10, right: 10, bottom: 40, left: 30 };
+        const margin = { top: 10, right: 10, bottom: 30, left: 30 };
         const containerWidth = containerRef.current.clientWidth;
         const containerHeight = containerRef.current.clientHeight;
 
