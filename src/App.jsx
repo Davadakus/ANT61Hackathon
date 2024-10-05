@@ -1,9 +1,14 @@
+import * as THREE from 'three';
+import { useEffect, useRef } from 'react';
+
 import MyThree from './Three.jsx';
+
+
 
 function App() {
   return (
     <div className="min-h-screen flex flex-col">
-      {/* <MyThree /> */}
+      <MyThree />
       <h1 className="text-xl text-center font-bold"> 
         ANT61 Beacon Data Simulation
       </h1>
