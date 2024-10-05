@@ -1,5 +1,6 @@
 import { useRef, useEffect } from "react";
 import * as d3 from "d3";
+import * as topojson from 'topojson-client';
 
 let global_xScale: any;
 let global_yScale: any;
@@ -23,7 +24,7 @@ function loadLeftAxis(containerRef: any, svgRef: any, yScale: any) {
 
     // Create the axis
     const yAxis = d3.axisLeft(yScale)
-        .tickValues(d3.range(-90, 91, 10))
+        .ticks(15)  // Increase number of ticks based on zoom level
         .tickSize(tickSizeValue);
 
     // Append the axis to the g group
@@ -52,7 +53,7 @@ function loadBottomAxis(containerRef: any, svgRef: any, xScale: any) {
 
     // Create the axis
     const xAxis = d3.axisBottom(xScale)
-        .tickValues(d3.range(-180, 181, 20))
+        .ticks(15)  // Increase number of ticks based on zoom level
         .tickSize(tickSizeValue);
 
     // Append the axis to the g group
@@ -63,30 +64,6 @@ function loadBottomAxis(containerRef: any, svgRef: any, xScale: any) {
 
     svg.select('.x-axis path').style('stroke', 'none');
 }
-
-// // Function to add the world map background image
-// import imgUrl from "./assets/map.jpg";
-// // Function to add the world map background image and align it with axes
-// function addWorldMapBackground(svgRef: any, xScale: any, yScale: any, margin: any) {
-//     const svg = d3.select(svgRef.current);
-
-//     // Remove any existing background image
-//     svg.select('.world-map-bg').remove();
-
-//     // Calculate width and height of the image based on axis scales
-//     const width = xScale(180) - xScale(-180);  // Corresponding to longitude range [-180, 180]
-//     const height = yScale(-90) - yScale(90);   // Corresponding to latitude range [-90, 90]
-
-//     // Add the world map background image
-//     svg.insert('image', ":first-child")
-//         .attr('class', 'world-map-bg')
-//         .attr('href', imgUrl)  // The URL of the world map image
-//         .attr('width', width)
-//         .attr('height', height)
-//         .attr('x', xScale(-180)+ margin.left)  // Align the image with the xScale (starting at -180 longitude)
-//         .attr('y', yScale(90)+ 15);   // Align the image with the yScale (starting at 90 latitude)
-// }
-
 
 // Update map function to use the zoomed scales
 export function updateMap(locationData: number[]) {
@@ -133,14 +110,14 @@ export default function Map() {
         // Load initial axes
         loadLeftAxis(containerRef, svgRef, yScale);
         loadBottomAxis(containerRef, svgRef, xScale);
-
+        
         // Zoom behavior
         const zoom: any= d3.zoom()
             .translateExtent([   // Set panning limits based on the axes bounds
                 [0, 0],   // Upper left corner (min x, min y)
                 [containerWidth, height + margin.bottom]  // Bottom right corner (max x, max y)
             ])
-            .scaleExtent([1, 10])  // Set minimum scale 1 (no zoom out) and max scale 10 (upper zoom bound)
+            .scaleExtent([1, 100])  // Set minimum scale 1 (no zoom out) and max scale 10 (upper zoom bound)
             .on('zoom', (event: any) => {
 
                 // Get the scale factor only from the zoom event
@@ -154,10 +131,6 @@ export default function Map() {
                 // Clear and redraw axes with the updated scales
                 loadLeftAxis(containerRef, svgRef, global_yScale);
                 loadBottomAxis(containerRef, svgRef, global_xScale);
-
-                // Update the axes with the new scales
-                // d3.select('.x-axis').call(d3.axisBottom(new_xScale).tickValues(d3.range(-180, 181, 20).tickSize(tickSizeValue)));
-                // d3.select('.y-axis').call(d3.axisLeft(new_yScale).tickValues(d3.range(-90, 91, 10).tickSize(tickSizeValue)));
 
                 // Update the map points (or other graphical elements)
                 d3.selectAll('#mapPoints circle')
