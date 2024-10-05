@@ -68,7 +68,7 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-neutral-700">
-      <div className="text-xl text-center font-bold mt-3 bg-stone-900 p-2"> 
+      <div className="text-xl text-center font-bold mt-3 bg-stone-900 p-2 mx-4 rounded"> 
         ANT61 Beacon Data Visualizer
       </div>
       <div className="grid grid-cols-2 gap-4 p-4 flex-1">
@@ -76,9 +76,9 @@ function App() {
         {/* First column */}
         <div className="flex flex-col p-2 bg-stone-900 rounded space-y-4">
           <div>
-            <h1 className="text-2xl text-center font-bold">Simulated Beacon</h1>
+            <h1 className="text-2xl text-center font-bold mt-2">Simulated Beacon</h1>
           </div>
-          <div className="bg-neutral-700 flex-1 overflow-hidden relative rounded">
+          <div className="bg-neutral-700 flex overflow-hidden relative rounded mx-2 h-full">
             <MyThree pastRotation={pastRotation} rotation={rotation} gryoAccel={gryoAccel}/>
           </div>
         </div>
@@ -96,69 +96,70 @@ function App() {
             </h2>
           </h1>
           <div className="grid grid-cols text-justify bg-stone-900 rounded p-2">
-            <div className="grid grid-cols-2 text-justify border-solid border-green-700 border-1">
+            <div className="grid grid-cols-2 text-justify border-b-2 border-neutral-700">
               {/* MessageID Row */}
-              <h1 className="col-span-1">Message ID:</h1>
+              <h1 className="col-span-1 border-r-2 border-neutral-700 mx-1 ">Message ID:</h1>
               <h1 className="col-span-1">{messageId}</h1>
             </div>
 
-            <div className="grid grid-cols-2 text-justify ">
+            <div className="grid grid-cols-2 text-justify border-b-2 border-neutral-700">
               {/* Location Row */}
-              <h1 className="col-span-1">Location:</h1>
+              <h1 className="col-span-1 border-r-2 border-neutral-700 mx-1">Location:</h1>
               <div className="col-span-1 flex justify-between">
                 <h1>{currentLocation && currentLocation[0]?.toFixed(2)}°</h1>
                 <span>(Longitude)</span>
               </div>
-              <h1 className="col-span-1"></h1> {/* Empty space for alignment */}
+              <h1 className="col-span-1 border-r-2 border-neutral-700 mx-1"></h1> {/* Empty space for alignment */}
               <div className="col-span-1 flex justify-between">
                 <h1>{currentLocation && currentLocation[1]?.toFixed(2)}°</h1>
                 <span>(Latitude)</span>
               </div>
-              <h1 className="col-span-1"></h1> {/* Empty space for alignment */}
+              <h1 className="col-span-1 border-r-2 border-neutral-700 mx-1"></h1> {/* Empty space for alignment */}
               <div className="col-span-1 flex justify-between">
                 <h1>{currentLocation && currentLocation[2]?.toFixed(2)} km</h1>
                 <span>(Altitude)</span>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 text-justify">
+            <div className="grid grid-cols-2 text-justify border-b-2 border-neutral-700">
               {/* Rotation Row */}
-              <h1 className="col-span-1">Rotation:</h1>
+              <h1 className="col-span-1 border-r-2 border-neutral-700 mx-1">Rotation:</h1>
               <div className="col-span-1 flex justify-between">
                 <h1>{rotation && rotation[0]?.toFixed(2)}°</h1>
-                <span>(Yaw)</span>
+                <span>(X-Yaw)</span>
               </div>
-              <h1 className="col-span-1"></h1> {/* Empty space for alignment */}
+              <h1 className="col-span-1 border-r-2 border-neutral-700 mx-1"></h1> {/* Empty space for alignment */}
               <div className="col-span-1 flex justify-between">
                 <h1>{rotation && rotation[1]?.toFixed(2)}°</h1>
-                <span>(Pitch)</span>
+                <span>(Y-Pitch)</span>
               </div>
-              <h1 className="col-span-1"></h1> {/* Empty space for alignment */}
+              <h1 className="col-span-1 border-r-2 border-neutral-700 mx-1"></h1> {/* Empty space for alignment */}
               <div className="col-span-1 flex justify-between">
                 <h1>{rotation && rotation[2]?.toFixed(2)}°</h1>
-                <span>(Roll)</span>
+                <span>(Z-Roll)</span>
               </div>
             </div>
 
             <div className="grid grid-cols-2 text-justify">
               {/* Gyroscopic Acceleration Row */}
-              <h1 className="col-span-1">Gyroscopic Acceleration:</h1>
+              <h1 className="col-span-1 border-r-2 border-neutral-700 mx-1">Gyroscopic Acceleration:</h1>
               <div className="col-span-1 flex justify-between">
                 <h1>{gryoAccel && gryoAccel[0]?.toFixed(2)} deg/s²</h1>
                 <span>(X-axis)</span>
               </div>
-              <h1 className="col-span-1"></h1> {/* Empty space for alignment */}
+              <h1 className="col-span-1 border-r-2 border-neutral-700 mx-1"></h1> {/* Empty space for alignment */}
               <div className="col-span-1 flex justify-between">
                 <h1>{gryoAccel && gryoAccel[1]?.toFixed(2)} deg/s²</h1>
                 <span>(Y-axis)</span>
               </div>
-              <h1 className="col-span-1"></h1> {/* Empty space for alignment */}
+              <h1 className="col-span-1 border-r-2 border-neutral-700 mx-1"></h1> {/* Empty space for alignment */}
               <div className="col-span-1 flex justify-between">
                 <h1>{gryoAccel && gryoAccel[2]?.toFixed(2)} deg/s²</h1>
                 <span>(Z-axis)</span>
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
