@@ -9,6 +9,7 @@ function MyThree({ rotation, gryoAccel }) {
   const [loadedModel, setLoadedModel] = useState(null);
   const [arrowHelpers, setArrowHelpers] = useState([]);
   const [textLabels, setTextLabels] = useState([]); // State for text labels
+  const [axisLabels, setAxisLabels] = useState([]); // State for axis labels
   const [font, setFont] = useState(null); // State to hold the loaded font
   const sceneInitRef = useRef(null);
 
@@ -51,19 +52,27 @@ function MyThree({ rotation, gryoAccel }) {
     const sceneInit = new SceneInit('myThreeJsCanvas');
     sceneInit.initialize();
     sceneInitRef.current = sceneInit;
-
+  
     const gridSize = 300;
     const divisions = 30;
     const gridHelper = new THREE.GridHelper(gridSize, divisions, 0x0000ff, 0x808080);
     sceneInit.scene.add(gridHelper);
-
+  
+    // Add labels for X and Z axes on the grid
+    const xLabel = createTextLabel('X', new THREE.Vector3(gridSize / 2, 5, 0)); // Position X label on the grid
+    const zLabel = createTextLabel('Z', new THREE.Vector3(0, 5, gridSize / 2)); // Position Z label on the grid
+    
+    setAxisLabels([xLabel, zLabel]);
+    if (xLabel) sceneInit.scene.add(xLabel);
+    if (zLabel) sceneInit.scene.add(zLabel);
+  
     const origin = new THREE.Vector3(0, 0, 0);
     const length = 80;
-
+  
     const arrowHelperX = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), origin, length, 0xff0000, 10, 10);
     const arrowHelperY = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), origin, length, 0x0000ff, 10, 10);
     const arrowHelperZ = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), origin, length, 0x00ff00, 10, 10);
-
+  
     setArrowHelpers([arrowHelperX, arrowHelperY, arrowHelperZ]);
     sceneInit.scene.add(arrowHelperX, arrowHelperY, arrowHelperZ);
     
@@ -80,20 +89,21 @@ function MyThree({ rotation, gryoAccel }) {
       }
     });
     setTextLabels(labels);
-
+  
     const gltfLoader = new GLTFLoader();
     gltfLoader.load('/assets/Beacon.gltf', (gltfScene) => {
       setLoadedModel(gltfScene);
       gltfScene.scene.rotation.y = Math.PI / 8;
       sceneInit.scene.add(gltfScene.scene);
     });
-
+  
     const animate = () => {
       requestAnimationFrame(animate);
       sceneInit.renderer.render(sceneInit.scene, sceneInit.camera);
     };
     animate();
   }, [font]); // Add font as a dependency
+  
 
   // Text always facing camera
   useEffect(() => {
@@ -105,6 +115,13 @@ function MyThree({ rotation, gryoAccel }) {
         const camera = sceneInitRef.current.camera; // Access the camera
   
         textLabels.forEach((label) => {
+          if (label) {
+            // Set the text label to "look at" the camera
+            label.lookAt(camera.position);
+          }
+        });
+
+        axisLabels.forEach((label) => {
           if (label) {
             // Set the text label to "look at" the camera
             label.lookAt(camera.position);
@@ -181,7 +198,12 @@ function MyThree({ rotation, gryoAccel }) {
   }, [rotation, loadedModel, arrowHelpers, gryoAccel]);
   
 
-  return <div><canvas id="myThreeJsCanvas" /></div>;
+  return <canvas
+  id="myThreeJsCanvas"
+  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+  style={{ width: 'auto', height: 'auto' }} // Optional to adjust size
+/>;
+
 }
 
 export default MyThree;

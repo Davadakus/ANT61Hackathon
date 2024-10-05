@@ -33,7 +33,9 @@ export default class SceneInit {
       1,
       1000
     );
-    this.camera.position.z = 200;
+    this.camera.position.x = 100;
+    this.camera.position.y = 200;
+    this.camera.position.z = 100;
 
     // NOTE: Specify a canvas which is already created in the HTML.
     const canvas = document.getElementById(this.canvasId);
@@ -44,7 +46,7 @@ export default class SceneInit {
     });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     // this.renderer.shadowMap.enabled = true;
-    document.body.appendChild(this.renderer.domElement);
+    // document.body.appendChild(this.renderer.domElement);
 
     this.clock = new THREE.Clock();
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -93,8 +95,9 @@ export default class SceneInit {
   }
 
   onWindowResize() {
-    this.camera.aspect = window.innerWidth / window.innerHeight;
+    const canvas = document.getElementById(this.canvasId);
+    this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
     this.camera.updateProjectionMatrix();
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setSize(canvas.clientWidth, canvas.clientHeight);
   }
 }
