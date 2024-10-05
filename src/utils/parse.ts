@@ -1,33 +1,25 @@
-import fs from 'node:fs/promises';
+import raw from '../assets/updated_beacon_output.txt?raw';
 
-async function readTextFile(filePath: string): Promise<string> {
-    try {
-        const data = await fs.readFile(filePath, 'utf8'); // Use promise-based fs.readFile
-        return data;
-    } catch (err) {
-        console.error('Error reading file:', err);
-        return "";
+export function parseMessage(message: string): [string | null, number[] | null, number[] | null, number[] | null]  {
+    let cleanMessage: string | null = message.split("Message")[1]?.trim() || null;
+    if (cleanMessage === null){
+        return [null, null, null, null];
     }
-}
-
-function parseMessage(message: string): [string | null, number[] | null, number[] | null, number[] | null]  {
-    message = message.split("Message")[1].trim();
-    let messageId: string | null = message.split("V")[0] || null;
-    let location: number[] | null = message.split("L")[1]?.split("I")[0]?.slice(1,-1).split(",").map(Number) || null;
-    let rotation: number[] | null = message.split("R")[1]?.split("A")[0]?.slice(1,-1).split(",").map(Number) || null;
-    let gryoAccel: number[] | null = message.split("G")[1]?.split("I")[0]?.slice(1,-1).split(",").map(Number) || null;    
+    const messageId: string | null = cleanMessage.split("V")[0] || null;
+    const location: number[] | null = cleanMessage.split("L")[1]?.split("]")[0]?.slice(1).split(",").map(Number) || null;
+    const rotation: number[] | null = cleanMessage.split("R")[1]?.split("]")[0]?.slice(1).split(",").map(Number) || null;
+    const gryoAccel: number[] | null = cleanMessage.split("G")[1]?.split("]")[0]?.slice(1).split(",").map(Number) || null;    
     return [messageId, location, rotation, gryoAccel];
 }
 
-async function parseRawMessages (filepath: string) : Promise<string[]> {
-    let rawText: string = await readTextFile(filepath);
-    let messages: string[] = rawText.split("Message").slice(1).map((message) => ("Message" + message));
+export async function parseRawMessages (rawText: string) : Promise<string[]> {
+    const messages: string[] = rawText.split("Message").slice(1).map((message) => ("Message" + message));
     return messages;
 }
 
 async function main(){
-    let filepath: string = "../assets/updated_beacon_output.txt";
-    let fakeMessageStream: string[] = await parseRawMessages(filepath);
+    let rawText = raw;
+    const fakeMessageStream: string[] = await parseRawMessages(rawText);
 
     for (let i = 0; i < fakeMessageStream.length; i++) {
         console.log(parseMessage(fakeMessageStream[i]));
